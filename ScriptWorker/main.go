@@ -27,11 +27,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	// "github.com/gorilla/handlers"
+	// "github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	"net/http"
+	// "net/http"
 	"os"
 
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/entities"
@@ -40,6 +40,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// ENV sucture for all the Camunda Platform 8 credentials and settings
 type ENV struct {
 	ZeebeAddress      string `yaml:"zeebeAddress"`
 	ZeebeClientID     string `yaml:"zeebeClientID"`
@@ -47,10 +48,12 @@ type ENV struct {
 	ZeebeAuthServer   string `yaml:"zeebeAuthServer"`
 }
 
+// App Structure
 type App struct {
 	Router *mux.Router
 }
 
+// JobVars the variables we get from the Camunda Platform 8 process
 type JobVars struct {
 	Add   int `json:"add"`
 	Count int `json:"count"`
@@ -58,6 +61,7 @@ type JobVars struct {
 
 var config = ENV{}
 var readyClose = make(chan struct{})
+
 
 func main() {
 	a := App{}
@@ -68,25 +72,28 @@ func main() {
 		fmt.Println("Error:", err)
 		log.Fatal(err)
 	}
-	a.InitializeRoutes()
-	fmt.Println("Server Started")
-	a.Run(":4040")
+	// a.InitializeRoutes()
+	// fmt.Println("Server Started")
+	// a.Run(":4444")
 
 }
 
-func (a *App) InitializeRoutes() {
-	a.Router.HandleFunc("/", a.handleSlash).Methods("OPTIONS", "POST", "GET")
-}
+// InitializeRoutes but we won't be using them
+// func (a *App) InitializeRoutes() {
+	// a.Router.HandleFunc("/", a.handleSlash).Methods("OPTIONS", "POST", "GET")
+// }
 
+// Run We start a webserver, to keep the process running, but that's it.
 func (a *App) Run(addr string) {
 	fmt.Println("Running ... ")
-	credentials := handlers.AllowCredentials()
-	handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Referer", "Origin"})
-	methods := handlers.AllowedMethods([]string{"POST", "GET", "OPTIONS"})
-	origins := handlers.AllowedOriginValidator(nil)
-	log.Fatal(http.ListenAndServe(addr, handlers.CORS(credentials, methods, origins)(a.Router)))
+	// credentials := handlers.AllowCredentials()
+	// handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Referer", "Origin"})
+	// methods := handlers.AllowedMethods([]string{"POST", "GET", "OPTIONS"})
+	// origins := handlers.AllowedOriginValidator(nil)
+	// log.Fatal(http.ListenAndServe(addr, handlers.CORS(credentials, methods, origins)(a.Router)))
 }
 
+// read the config file and store settings
 func (a *App) init_proc() {
 	dat, err := ioutil.ReadFile("../zeebe.yaml")
 	if err != nil {
@@ -97,8 +104,10 @@ func (a *App) init_proc() {
 		log.Fatal(err)
 	}
 }
+
+// Initialize the Camunda Platform 8 client
 func (a *App) Initialize() error {
-	a.Router = mux.NewRouter().StrictSlash(true)
+	// a.Router = mux.NewRouter().StrictSlash(true)
 	config.ZeebeAddress = os.Getenv("ZEEBE_ADDRESS")
 	if config.ZeebeAddress == "" {
 		a.init_proc()
@@ -114,6 +123,7 @@ func (a *App) Initialize() error {
 	if err != nil {
 		panic(err)
 	}
+	// Start the job worker to handle jobs
 	jobWorker := client.NewJobWorker().JobType("AddOneTask").Handler(a.handleC8Job).Open()
 
 	<-readyClose
@@ -123,14 +133,15 @@ func (a *App) Initialize() error {
 	return nil
 }
 
-func (a *App) handleSlash(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Go Away!")
-}
+// I told you, we aren't doing anything!
+// func (a *App) handleSlash(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Fprintf(w, "Go Away!")
+// }
 
+// Here's where we handle incoming script task jobs.
 func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
 	fmt.Println("handleC8Job")
 	jobKey := job.GetKey()
-
 	_, err := job.GetCustomHeadersAsMap()
 	if err != nil {
 		// failed to handle job as we require the custom job headers
@@ -143,8 +154,8 @@ func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
 		failJob(client, job)
 		return
 	}
-
 	fmt.Printf("%+v\n", jobVars)
+	// This is a simple script. We add the two values and return the result.
 	jobVars.Count = jobVars.Count + jobVars.Add
 	fmt.Printf("%+v\n", jobVars)
 	request, err := client.NewCompleteJobCommand().JobKey(jobKey).VariablesFromObject(jobVars)
@@ -153,29 +164,20 @@ func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
 		failJob(client, job)
 		return
 	}
-
 	fmt.Println("Complete job", jobKey, "of type", job.Type)
-
 	ctx := context.Background()
 	_, err = request.Send(ctx)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Successfully completed job")
-	// close(readyClose)
 }
 
-// func (a *App) startJobWorker(client worker.JobClient){
-// 	jobWorker := client.NewJobWorker().JobType("AddOneTask").Handler(a.handleC8Job).Open()
 
-//     <- readyClose
-// 	jobWorker.Close()
-// 	jobWorker.AwaitClose()
-// }
-
+// If we fail to handle the job for some reason.
 func failJob(client worker.JobClient, job entities.Job) {
-	fmt.Println("Failed to complete job", job.GetKey())
-
+	fmt.Println("Failed to complete job")
+	job.GetKey()
 	ctx := context.Background()
 	_, err := client.NewFailJobCommand().JobKey(job.GetKey()).Retries(job.Retries - 1).Send(ctx)
 	if err != nil {
