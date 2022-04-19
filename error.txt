@@ -1,0 +1,10 @@
+Server Started
+Running ...
+Zeebe Address:  'b5161a28-2fd3-4879-a99e-60f7478ad3d5.bru-2.zeebe.camunda.io:443
+Zeebe Client ID:  wROQIC_haG_T6932iWZYsFxwuSIbR~UG
+Zeebe Client Secret:  UD5aifgUg9RXJ00.Dy3sIKGG2Qj1lqPJD7-P~Oj5CgysuSjYF.XS1scmEh_Kr2Tg
+Zeebe Auth Server:  https://login.cloud.camunda.io/oauth/token
+Zeebe Auth Creds:  {wROQIC_haG_T6932iWZYsFxwuSIbR~UG UD5aifgUg9RXJ00.Dy3sIKGG2Qj1lqPJD7-P~Oj5CgysuSjYF.XS1scmEh_Kr2Tg 'b5161a28-2fd3-4879-a99e-60f7478ad3d5.bru-2.zeebe.camunda.io https://login.cloud.camunda.io/oauth/token <nil> 0s}
+ZeeBe Config:  'b5161a28-2fd3-4879-a99e-60f7478ad3d5.bru-2.zeebe.camunda.io
+rpc error: code = Unavailable desc = connection error: desc = "transport: Error while dialing dial tcp: lookup 'b5161a28-2fd3-4879-a99e-60f7478ad3d5.bru-2.zeebe.camunda.io: no such host"
+

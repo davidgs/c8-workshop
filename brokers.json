@@ -1,0 +1,19 @@
+brokers: {host: "zeebe-0.zeebe-broker-service.b5161a28-2fd3-4879-a99e-60f7478ad3d5-zeebe.svc.cluster.local" port: 26501 partitions: {partitionId: 1 role:FOLLOWER
+  } partitions: {partitionId: 2 role:FOLLOWER
+  } version: "8.0.0"
+} brokers: {nodeId: 1 host: "zeebe-1.zeebe-broker-service.b5161a28-2fd3-4879-a99e-60f7478ad3d5-zeebe.svc.cluster.local" port: 26501 partitions: {partitionId: 1
+  } partitions: {partitionId: 2 role:FOLLOWER
+  } version: "8.0.0"
+} brokers: {nodeId: 2 host: "zeebe-2.zeebe-broker-service.b5161a28-2fd3-4879-a99e-60f7478ad3d5-zeebe.svc.cluster.local" port: 26501 partitions: {partitionId: 1 role:FOLLOWER
+  } partitions: {partitionId: 2
+  } version: "8.0.0"
+} clusterSize: 3 partitionsCount: 2 replicationFactor: 3 gatewayVersion: "8.0.0"
+
+[host: "zeebe-0.zeebe-broker-service.b5161a28-2fd3-4879-a99e-60f7478ad3d5-zeebe.svc.cluster.local" port: 26501 partitions: {partitionId: 1 role:FOLLOWER
+  } partitions: {partitionId: 2 role:FOLLOWER
+  } version: "8.0.0" nodeId: 1 host: "zeebe-1.zeebe-broker-service.b5161a28-2fd3-4879-a99e-60f7478ad3d5-zeebe.svc.cluster.local" port: 26501 partitions: {partitionId: 1
+  } partitions: {partitionId: 2 role:FOLLOWER
+  } version: "8.0.0" nodeId: 2 host: "zeebe-2.zeebe-broker-service.b5161a28-2fd3-4879-a99e-60f7478ad3d5-zeebe.svc.cluster.local" port: 26501 partitions: {partitionId: 1 role:FOLLOWER
+  } partitions: {partitionId: 2
+  } version: "8.0.0"
+]
