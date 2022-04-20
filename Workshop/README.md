@@ -8,24 +8,23 @@
   - Google Image AI
   - ngrok
     - Signup
-    - Download
-      - Use ngrok installer
-      - Use `brew install ngrok`
-      - `ngrok config add-authtoken YOUR_TOKEN`
-    - start
 - Gather information
   - Camunda Cloud
   - Google AI
-- Create simple C8 Process
-  - One task
+- [Create simple C8 Process](../ScriptWorker/index.md)
+  - three tasks
   - Deploy model
-- Create simple Golang task worker
+  - Create simple Golang task worker
+    - Start ScriptWorker
+  - Run Model
     - start task worker
   - Deploy and run process
-- Build the hardware
-- Configure the hardware
-  - Connect to WiFi
-  - Save Credentials (use from step 1)
+- [Build the hardware](../Hardware/index.md)
+  - Build hardware
+  - Deploy hardware
+  - Configure the hardware
+    - Connect to WiFi
+    - Save Credentials (use from step 1)
 - First Model
   - Create the model
   - deploy the model
