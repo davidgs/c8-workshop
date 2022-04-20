@@ -74,4 +74,25 @@ in the `main.go` file set the `PROC_NAME` constant to `AddOneTask`, build and st
 
 There is a file `test-script-worker.bpmn` in this directory that you can use to create a test process. You can drag-drop this file into the Modeler tab of Camunda Cloud and then click the `Deploy Diagram` button to deploy the process. Once the process is deployed, click the `Start Instance` button to start a process instance.
 
-If you've made no changes to the process diagram, your process should complete very quickly. You can go to the `Operate` tab and see a list of processes that are running (or finished). 
+If you've made no changes to the process diagram, your process should complete very quickly. You can go to the `Operate` tab and see a list of processes that are running (or finished).
+
+![List of finished processes](images/process-list.png)
+
+If you click on the process ID in the list, you can see that the process has completed, and that the total count at the end is `10`. (We started it with `count=0` and added `add=1` to it, then added `4`, then added `5`.)
+
+Alternatively, we could start the process with an arbitrary number, and add any number to it in the first step. To do this, we add a starting set of variables to the process:
+
+```json
+{
+  "count": 10,
+  "add": 5
+}
+```
+
+![Starting process with arbitrary variables](images/variables.png)
+
+And we will end up with a final count of `24` (10 + 5 + 4 + 5 = 24).
+
+![Final count](images/final-answer.png)
+
+We will be using this simple ScriptWorker for other parts of this lab. 
