@@ -50,7 +50,7 @@ type ENV struct {
 
 // App Structure
 type App struct {
-	Router *mux.Router
+	// Router *mux.Router
 }
 
 // JobVars the variables we get from the Camunda Platform 8 process
@@ -72,25 +72,10 @@ func main() {
 		fmt.Println("Error:", err)
 		log.Fatal(err)
 	}
-	// a.InitializeRoutes()
-	// fmt.Println("Server Started")
-	// a.Run(":4444")
-
 }
 
-// InitializeRoutes but we won't be using them
-// func (a *App) InitializeRoutes() {
-	// a.Router.HandleFunc("/", a.handleSlash).Methods("OPTIONS", "POST", "GET")
-// }
-
-// Run We start a webserver, to keep the process running, but that's it.
 func (a *App) Run(addr string) {
 	fmt.Println("Running ... ")
-	// credentials := handlers.AllowCredentials()
-	// handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Referer", "Origin"})
-	// methods := handlers.AllowedMethods([]string{"POST", "GET", "OPTIONS"})
-	// origins := handlers.AllowedOriginValidator(nil)
-	// log.Fatal(http.ListenAndServe(addr, handlers.CORS(credentials, methods, origins)(a.Router)))
 }
 
 // read the config file and store settings
@@ -107,7 +92,6 @@ func (a *App) init_proc() {
 
 // Initialize the Camunda Platform 8 client
 func (a *App) Initialize() error {
-	// a.Router = mux.NewRouter().StrictSlash(true)
 	config.ZeebeAddress = os.Getenv("ZEEBE_ADDRESS")
 	if config.ZeebeAddress == "" {
 		a.init_proc()
@@ -132,11 +116,6 @@ func (a *App) Initialize() error {
 
 	return nil
 }
-
-// I told you, we aren't doing anything!
-// func (a *App) handleSlash(w http.ResponseWriter, r *http.Request) {
-// 	fmt.Fprintf(w, "Go Away!")
-// }
 
 // Here's where we handle incoming script task jobs.
 func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
