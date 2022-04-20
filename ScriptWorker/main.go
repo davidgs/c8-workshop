@@ -27,11 +27,8 @@ package main
 import (
 	"context"
 	"fmt"
-	// "github.com/gorilla/handlers"
-	// "github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
-	// "net/http"
 	"os"
 
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/entities"
@@ -50,7 +47,6 @@ type ENV struct {
 
 // App Structure
 type App struct {
-	// Router *mux.Router
 }
 
 // JobVars the variables we get from the Camunda Platform 8 process
