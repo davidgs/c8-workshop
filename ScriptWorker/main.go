@@ -37,6 +37,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// Set this to the name of your task
+const PROC_NAME = "AddOneTask"
+
+// Set this to `false` to stop output to the terminal
+const DEBUG = false
+
 // ENV sucture for all the Camunda Platform 8 credentials and settings
 type ENV struct {
 	ZeebeAddress      string `yaml:"zeebeAddress"`
@@ -61,17 +67,13 @@ var readyClose = make(chan struct{})
 
 func main() {
 	a := App{}
-	fmt.Println("Starting Camunda Cloud Zeebe ScriptWorker")
-	fmt.Println("===================================")
+	dPrintln("Starting Camunda Cloud Zeebe ScriptWorker")
+	dPrintln("===================================")
 	err := a.Initialize()
 	if err != nil {
-		fmt.Println("Error:", err)
+		dPrintln("Error:", err)
 		log.Fatal(err)
 	}
-}
-
-func (a *App) Run(addr string) {
-	fmt.Println("Running ... ")
 }
 
 // read the config file and store settings
@@ -104,7 +106,7 @@ func (a *App) Initialize() error {
 		panic(err)
 	}
 	// Start the job worker to handle jobs
-	jobWorker := client.NewJobWorker().JobType("AddOneTask").Handler(a.handleC8Job).Open()
+	jobWorker := client.NewJobWorker().JobType(PROC_NAME).Handler(a.handleC8Job).Open()
 
 	<-readyClose
 	jobWorker.Close()
@@ -115,7 +117,7 @@ func (a *App) Initialize() error {
 
 // Here's where we handle incoming script task jobs.
 func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
-	fmt.Println("handleC8Job")
+	dPrintln("handleC8Job")
 	jobKey := job.GetKey()
 	_, err := job.GetCustomHeadersAsMap()
 	if err != nil {
@@ -129,33 +131,51 @@ func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
 		failJob(client, job)
 		return
 	}
-	fmt.Printf("%+v\n", jobVars)
+	dPrintf("%+v\n", jobVars)
+	if jobVars.Count < 0 {
+		jobVars.Count = 0
+	}
+	if jobVars.Add <= 0 {
+		jobVars.Add = 1
+	}
 	// This is a simple script. We add the two values and return the result.
 	jobVars.Count = jobVars.Count + jobVars.Add
-	fmt.Printf("%+v\n", jobVars)
+	dPrintf("%+v\n", jobVars)
 	request, err := client.NewCompleteJobCommand().JobKey(jobKey).VariablesFromObject(jobVars)
 	if err != nil {
 		// failed to set the updated variables
 		failJob(client, job)
 		return
 	}
-	fmt.Println("Complete job", jobKey, "of type", job.Type)
+	dPrintln("Complete job", jobKey, "of type", job.Type)
 	ctx := context.Background()
 	_, err = request.Send(ctx)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Successfully completed job")
+	dPrintln("Successfully completed job")
 }
 
 
 // If we fail to handle the job for some reason.
 func failJob(client worker.JobClient, job entities.Job) {
-	fmt.Println("Failed to complete job")
+	dPrintln("Failed to complete job")
 	job.GetKey()
 	ctx := context.Background()
 	_, err := client.NewFailJobCommand().JobKey(job.GetKey()).Retries(job.Retries - 1).Send(ctx)
 	if err != nil {
 		panic(err)
+	}
+}
+
+func dPrintf(format string, a ...interface{}) {
+	if DEBUG {
+		fmt.Printf(format, a...)
+	}
+}
+
+func dPrintln(a ...interface{}) {
+	if DEBUG {
+		fmt.Println(a...)
 	}
 }
