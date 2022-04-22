@@ -1,4 +1,4 @@
-# Assembly and Configuration of the Hardware
+# Exercise 3: Building IoT Hardware
 
 In this portion of the lab we will assemble the hardware components in the kit and, once build, we will configure the hardware to use in our process.
 
@@ -106,6 +106,13 @@ In this portion of the lab we will assemble the hardware components in the kit a
 
 Once all of these libraries are installed, you can open the `CandyCam` sketch. All you should need to do at this point is plug your ESP32-CAM into the USB port on your laptop and click `upload` to load the sketch to your device.
 
+**Troubleshooting**
+> If you're having trouble with the port "timing out", try reducing the port speed to 115200. If you're unable to reduce the port speed, you can open a terminal and run the following command:
+> ```shell
+> $ esptool.py -p YOUR_PORT -b 115200 ...
+> ```
+> and then copy/paste the failed command from the Arduino IDE window (the part after the `-p` section) into the terminal.
+
 Once the upload is complete, open the Serial Monitor and look for the line:
 
 ```
@@ -132,4 +139,8 @@ Click on `Configure WiFi` and you will see the configuration page:
 
 We will be using this configuration page a few times, so having your C8 Cluster information handy is a good idea. You can always get back to this configuration page by holding down the first button on your board and waiting for the board to reset and give you the SSID again in the Serial Monitor.
 
+For the `Camunda Process ID` field, you can enter `C8Skittles-start` for now.
+
 Your ESP32-CAM should now be connected to the WiFi Network and be ready to submit pictures to the process (don't press the button just yet, since you don't have a process yet).
+
+Time to move on to [Exercise 4](../Exercise4/index.md) to build our first IoT process!

@@ -1,4 +1,4 @@
-# Script Worker for Camunda Platform 8
+# Exercise 2: Your first process
 
 ## Implementing a simple script worker in Golang
 
@@ -72,7 +72,11 @@ First, we will need to create and deploy a process that will call your script wo
 
 in the `main.go` file set the `PROC_NAME` constant to `AddOneTask`, build and start your ScriptWorker.
 
-There is a file `test-script-worker.bpmn` in this directory that you can use to create a test process. You can drag-drop this file into the Modeler tab of Camunda Cloud and then click the `Deploy Diagram` button to deploy the process. Once the process is deployed, click the `Start Instance` button to start a process instance.
+There is a file `test-script-worker.bpmn` in this directory that you can use to create a test process. You can drag-drop this file into the Modeler tab of Camunda Cloud. Your propcess should look like this:
+
+![Test Script Worker Process](images/test-script-worker.png)
+
+You can click the `Deploy Diagram` button to deploy the process. Once the process is deployed, click the `Start Instance` button to start a process instance.
 
 If you've made no changes to the process diagram, your process should complete very quickly. You can go to the `Operate` tab and see a list of processes that are running (or finished).
 
@@ -95,4 +99,6 @@ And we will end up with a final count of `24` (10 + 5 + 4 + 5 = 24).
 
 ![Final count](images/final-answer.png)
 
-We will be using this simple ScriptWorker for other parts of this lab. 
+We will be using this simple ScriptWorker for other parts of this lab.
+
+Time to move on to [Exercise 3](../Exercise3/index.md).

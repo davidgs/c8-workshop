@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
+	// "os"
 	"strings"
 
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/entities"
@@ -17,15 +17,17 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/gorilla/mux"
+	"github.com/golang/gddo/httputil/header"
+	"github.com/gorilla/handlers"
 )
 
 type ClientEnv struct {
-	ZeebeAddress      string `yaml:"zeebeAddress"`
-	ZeebeClientID    string `yaml:"zeebeClientID"`
-	ZeebeClientSecret string `yaml:"zeebeClientSecret"`
-	ZeebeAuthServer   string `yaml:"zeebeAuthServer"`
-	ProcessID				 string `yaml:"processID"`
-	Variables				 map[string]interface{} `yaml:"variables"`
+	ZeebeAddress      string                 `yaml:"zeebeAddress"`
+	ZeebeClientID     string                 `yaml:"zeebeClientID"`
+	ZeebeClientSecret string                 `yaml:"zeebeClientSecret"`
+	ZeebeAuthServer   string                 `yaml:"zeebeAuthServer"`
+	ProcessID         string                 `yaml:"processID"`
+	Variables         map[string]interface{} `yaml:"variables"`
 }
 
 var OCP = zbc.OAuthProviderConfig{
@@ -56,7 +58,7 @@ func init_proc() {
 }
 
 func main() {
-	fmt.Println("Starting Camunda Cloud Zeebe Client")
+	fmt.Println("Starting Camunda Cloud Process Broker")
 	fmt.Println("===================================")
 	a := App{}
 	err := a.Initialize()
@@ -64,17 +66,7 @@ func main() {
 		fmt.Println("Error:", err)
 		log.Fatal(err)
 	}
-	// init_proc()
-
-	config.ZeebeAddress = os.Getenv("ZEEBE_ADDRESS")
-	if config.ZeebeAddress == "" {
-		init_proc()
-		// os.Setenv("ZEEBE_ADDRESS", config.ZeebeAddress)
-		// os.Setenv("ZEEBE_CLIENT_ID", config.ZeebeClientID)
-		// os.Setenv("ZEEBE_CLIENT_SECRET", config.ZeebeClientSecret)
-		// os.Setenv("ZEEBE_AUTH_SERVER", config.ZeebeAuthServer)
-	}
-a.InitializeRoutes()
+	a.InitializeRoutes()
 	fmt.Println("Server Started, listening on port 5050")
 	a.Run(":5050")
 
@@ -97,14 +89,10 @@ func (a *App) InitializeRoutes() {
 
 func (a *App) Run(addr string) {
 	fmt.Println("Running ... ")
-	// credentials := handlers.AllowCredentials()
-	// //handlers.IgnoreOptions()
-	// handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization", "Referer", "Origin"})
-	// methods := handlers.AllowedMethods([]string{"POST", "GET", "OPTIONS"})
-	// origins := handlers.AllowedOriginValidator(originValidator)
+
 	fileServer := http.FileServer(http.Dir("./pix")) // New code
-    http.Handle("/pix", fileServer)
-	log.Fatal(http.ListenAndServe(addr, a.Router))
+	http.Handle("/pix", fileServer)
+	log.Fatal(http.ListenAndServeTLS(addr,"/home/davidgs/.node-red/combined", "/home/davidgs/.node-red/combined", a.Router))
 
 }
 
@@ -133,11 +121,11 @@ func (a *App) createInstance(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Zeebe Auth Server: ", env.ZeebeAuthServer)
 	fmt.Println("Zeebe Auth Creds: ", authCreds)
 	fmt.Println("ZeeBe Config: ", authCreds.Audience)
-	fmt.Println("Config Address: ", config.ZeebeAddress)
+	fmt.Println("Config Address: ", env.ZeebeAddress)
 	OAuthCredentialsProvider, err := zbc.NewOAuthCredentialsProvider(&authCreds)
 	if err != nil {
 		fmt.Println(err)
-		return;
+		return
 	}
 	clientConfig := zbc.ClientConfig{
 		GatewayAddress:      env.ZeebeAddress,
@@ -148,16 +136,16 @@ func (a *App) createInstance(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	dat, err := os.ReadFile("./C.3.0.png")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = os.WriteFile("/pix/C.3.0.png", dat, 0644)
+	// dat, err := os.ReadFile("./C.3.0.png")
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
+	// err = os.WriteFile("/pix/C.3.0.png", dat, 0644)
 	ctx := context.Background()
 
-	 variables := env.Variables
-	 variables["image"] = "http://localhost:5050/pix/C.3.0.png"
+	variables := env.Variables
+	// variables["image"] = "http://localhost:5050/pix/C.3.0.png"
 	// variables["orderId"] = "31243"
 	request, err := client.NewCreateInstanceCommand().BPMNProcessId(env.ProcessID).LatestVersion().VariablesFromMap(variables)
 	if err != nil {
@@ -216,7 +204,7 @@ func (a *App) getTopology(w http.ResponseWriter, r *http.Request) {
 	OAuthCredentialsProvider, err := zbc.NewOAuthCredentialsProvider(&authCreds)
 	if err != nil {
 		fmt.Println(err)
-		return;
+		return
 	}
 	clientConfig := zbc.ClientConfig{
 		GatewayAddress:      env.ZeebeAddress,

@@ -1,0 +1,51 @@
+{
+  "components": [
+    {
+      "label": "Picture",
+      "type": "textfield",
+      "id": "Field_0gaeq2x",
+      "key": "imageLoc",
+      "disabled": true
+    },
+    {
+      "values": [
+        {
+          "label": "less than 6 years old",
+          "value": "little"
+        },
+        {
+          "label": "6 - 10 years old",
+          "value": "small"
+        },
+        {
+          "label": "11 - 14 years old",
+          "value": "tween"
+        },
+        {
+          "label": "15 years old or older",
+          "value": "old"
+        }
+      ],
+      "label": "Age Guess",
+      "type": "select",
+      "id": "Field_1is3mm4",
+      "key": "age"
+    },
+    {
+      "label": "Candy Bag",
+      "type": "number",
+      "id": "Field_0r1u1do",
+      "key": "candyCount",
+      "disabled": true
+    }
+  ],
+  "schemaVersion": 4,
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "b72d66c"
+  },
+  "type": "default",
+  "id": "Form_1755f32e-c632-4aac-af47-8fbb189963bb",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "1.3"
+}

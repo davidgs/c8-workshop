@@ -1,0 +1,38 @@
+{
+  "components": [
+    {
+      "label": "Evaluate Picture",
+      "type": "textfield",
+      "id": "Field_0ngkrn5",
+      "key": "imageLoc",
+      "properties": {},
+      "disabled": true
+    },
+    {
+      "values": [
+        {
+          "label": "Yes",
+          "value": "true"
+        },
+        {
+          "label": "No",
+          "value": "false"
+        }
+      ],
+      "label": "Wearing a Costume?",
+      "type": "radio",
+      "id": "Field_04fjona",
+      "key": "isCostume",
+      "defaultValue": "true"
+    }
+  ],
+  "schemaVersion": 4,
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "b72d66c"
+  },
+  "type": "default",
+  "id": "evaluate_pic",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "1.3"
+}
