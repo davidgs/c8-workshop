@@ -4,42 +4,45 @@
 
 
 - [Exercise 1: Sign up for accounts](Exercise1/index.md)
-  - Camunda Cloud
+  - Camunda Cloud Account
+    - Provision a cluster
+    - Get your API Keys
   - Google Image AI
-- Gather information
-  - Camunda Cloud
-  - Google AI
+    - Add the Vision API
+    - Get your API Keys
 - [Exercise 2: Your first process](Exercise2/index.md)
-  - three tasks
-  - Deploy model
   - Create simple Golang task worker
     - Start ScriptWorker
-  - Deploy and run process
+  - Create your first model
+    - Create your first process
 - [Exercise 3: Building IoT Hardware](Exercise3/index.md)
   - Build hardware
-  - Deploy hardware
   - Flash the firmware
   - Configure the hardware
     - Connect to WiFi
-    - Save Credentials (use from step 1)
+    - Save Credentials (use from [step 1](../Exercise1/index.md))])
 - [Exercise 4: Your first orchestrated IoT Process](Exercise4/index.md)
   - Create the model
   - Create the Forms
-  - deploy the model
-  - start the script task worker
+  - Deploy the model
+  - Start the script task worker
   - Take picture
-  - Evaluate picture
-  - ...
+  - Handle the Process
+    - Evaluate the Picture
+    - Rate the costume
+    - Estimate the age
+    - Dispense Skittles!
 - [Exercise 5: Using Decision Tables](../Exercise5/index.md)
   - Create Model
   - Create DMN
-  - Create task worker
-  - Start task worker
-  - Deploy Model
+  - Create Task worker
+  - Start Task worker
   - Deploy DMN
+  - Deploy Model
   - Take picture
-  - Evaluate picture
-  - ...
+  - Evaluate picture, rate the Costume and estimate the age
+    - Dispense Skittles!
+- [Exercise 6: Using Decision Tables](../Exercise6/index.md)
 - Third model
   - Create model
   - Create DMN
