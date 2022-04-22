@@ -1,0 +1,47 @@
+{
+  "components": [
+    {
+      "label": "Picture",
+      "type": "textfield",
+      "id": "Field_18s4ypr",
+      "key": "imageLoc",
+      "disabled": true
+    },
+    {
+      "values": [
+        {
+          "label": "Great Costume!",
+          "value": "great"
+        },
+        {
+          "label": "It's OK",
+          "value": "ok"
+        },
+        {
+          "label": "Is that even a Costume?",
+          "value": "bad"
+        }
+      ],
+      "label": "Costume Quality",
+      "type": "select",
+      "id": "Field_161kgz2",
+      "key": "quality"
+    },
+    {
+      "label": "Candy Bag",
+      "type": "number",
+      "id": "Field_1ow681l",
+      "key": "candyCount",
+      "disabled": true
+    }
+  ],
+  "schemaVersion": 4,
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "b72d66c"
+  },
+  "type": "default",
+  "id": "Form_10f3ea2e-116c-40d7-995e-af9fb8553167",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "1.3"
+}

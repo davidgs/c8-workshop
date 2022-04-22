@@ -1,1 +1,52 @@
-c8-goproj
+# Camunda Cloud IoT Workshop
+
+# DRAFT!! NOT FOR DISTRIBUTION!!
+
+
+- [Exercise 1: Sign up for accounts](Exercise1/index.md)
+  - Camunda Cloud Account
+    - Provision a cluster
+    - Get your API Keys
+  - Google Image AI
+    - Add the Vision API
+    - Get your API Keys
+- [Exercise 2: Your first process](Exercise2/index.md)
+  - Create simple Golang task worker
+    - Start ScriptWorker
+  - Create your first model
+    - Create your first process
+- [Exercise 3: Building IoT Hardware](Exercise3/index.md)
+  - Build hardware
+  - Flash the firmware
+  - Configure the hardware
+    - Connect to WiFi
+    - Save Credentials (use from [step 1](../Exercise1/index.md))])
+- [Exercise 4: Your first orchestrated IoT Process](Exercise4/index.md)
+  - Create the model
+  - Create the Forms
+  - Deploy the model
+  - Start the script task worker
+  - Take picture
+  - Handle the Process
+    - Evaluate the Picture
+    - Rate the costume
+    - Estimate the age
+    - Dispense Skittles!
+- [Exercise 5: Using Decision Tables](../Exercise5/index.md)
+  - Create Model
+  - Create DMN
+  - Create Task worker
+  - Start Task worker
+  - Deploy DMN
+  - Deploy Model
+  - Take picture
+  - Evaluate picture, rate the Costume and estimate the age
+    - Dispense Skittles!
+- [Exercise 6: Using Decision Tables](../Exercise6/index.md)
+- Third model
+  - Create model
+  - Create DMN
+  - Deploy model and DMN
+  - Create task workers
+  - Take picture
+-
