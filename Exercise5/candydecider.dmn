@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:camunda="http://camunda.org/schema/1.0/dmn" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="candyDeciderTable" name="CandyDecider" namespace="http://camunda.org/schema/1.0/dmn" camunda:diagramRelationId="a5999378-fb48-4245-be34-f30ccbaa978c" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.3.0">
+  <inputData id="isCostume" name="IsCostume"/>
+  <decision id="SkittleDecision" name="Determine Skittles">
+    <informationRequirement id="InformationRequirement_0hwgbzc">
+      <requiredInput href="#InputData_14guiqd"/>
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_13fi090">
+      <requiredInput href="#InputData_0mo572a"/>
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1qy0uzj">
+      <requiredInput href="#isCostume"/>
+    </informationRequirement>
+    <decisionTable id="DecisionTable_04sg1jj" hitPolicy="COLLECT" aggregation="SUM">
+      <input id="InputClause_1nl5r3t" label="Rating">
+        <inputExpression id="LiteralExpression_0smo1n2" typeRef="string">
+          <text>rating</text>
+        </inputExpression>
+        <inputValues id="UnaryTests_0kmk2yl">
+          <text>"ok","great","bad"</text>
+        </inputValues>
+      </input>
+      <input id="InputClause_0fmfzrw" label="Age">
+        <inputExpression id="LiteralExpression_1j6eeqo" typeRef="string">
+          <text>age</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_10zim45" label="Is it a Costume?">
+        <inputExpression id="LiteralExpression_1knpc00" typeRef="string">
+          <text>isCostume</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_10ao1tm" label="Skittles" name="candyCount" typeRef="number"/>
+      <rule id="DecisionRule_0x27n2o">
+        <description>Bad Costumers get no extra candy</description>
+        <inputEntry id="UnaryTests_1n3qgad">
+          <text>"bad"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0qjbe0q">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0haxrxa">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1kv5370">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1oq69ee">
+        <description>OK costumes get 2 pieces of candy</description>
+        <inputEntry id="UnaryTests_06rls8d">
+          <text>"ok"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_14a8zvc">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1hm7u3f">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0zz43z6">
+          <text>2</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1s9h02e">
+        <description>Great costumes get 4 pieces of candy</description>
+        <inputEntry id="UnaryTests_0urn0ne">
+          <text>"great"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bw7vpw">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1s3w6bn">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0ytpb0s">
+          <text>4</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_18n1yzd">
+        <description>Very young kids get 4 pieces of candy</description>
+        <inputEntry id="UnaryTests_1cdiw92">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1xvj0je">
+          <text>"little"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1g26xt0">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_081195w">
+          <text>4</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1wea89v">
+        <description>Younger kids get 3 pieces of candy</description>
+        <inputEntry id="UnaryTests_1q4pw0p">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0oy4bwa">
+          <text>"kid"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0zqov5a">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_181iuxy">
+          <text>3</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_195ankf">
+        <description>Tweens get 1 piece of candy</description>
+        <inputEntry id="UnaryTests_0oidblq">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0nwxwy5">
+          <text>"tween"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_13nnx5x">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1kzmiqy">
+          <text>1</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_03nti1h">
+        <description>Teenagers are old enough to buy their own candy!</description>
+        <inputEntry id="UnaryTests_1lwwn16">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_05pjv6f">
+          <text>"teen"</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1sz604w">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1py6uyt">
+          <text>-100</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1jswgwq">
+        <description>Default is zero</description>
+        <inputEntry id="UnaryTests_1fiboos">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_094iayu">
+          <text>-</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1oy1x3b">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_19wwpyh">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1o7ae7f">
+        <description>Not A Costume</description>
+        <inputEntry id="UnaryTests_1trfne0">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0cbijlj">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0a5iig0">
+          <text>"false"</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1b042t9">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_14guiqd" name="Age"/>
+  <inputData id="InputData_0mo572a" name="Costume Rating"/>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape id="DMNShape_1wiouz0" dmnElementRef="isCostume">
+        <dc:Bounds height="45" width="125" x="158" y="97"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0q1b11s" dmnElementRef="SkittleDecision">
+        <dc:Bounds height="80" width="180" x="410" y="80"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1jflfhi" dmnElementRef="InputData_14guiqd">
+        <dc:Bounds height="45" width="125" x="367" y="217"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0odscvp" dmnElementRef="InformationRequirement_0hwgbzc">
+        <di:waypoint x="430" y="217"/>
+        <di:waypoint x="470" y="180"/>
+        <di:waypoint x="470" y="160"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_1g9uaxm" dmnElementRef="InputData_0mo572a">
+        <dc:Bounds height="45" width="125" x="537" y="217"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0isqjzc" dmnElementRef="InformationRequirement_13fi090">
+        <di:waypoint x="600" y="217"/>
+        <di:waypoint x="530" y="180"/>
+        <di:waypoint x="530" y="160"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_02j6my5" dmnElementRef="InformationRequirement_1qy0uzj">
+        <di:waypoint x="283" y="120"/>
+        <di:waypoint x="390" y="120"/>
+        <di:waypoint x="410" y="120"/>
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

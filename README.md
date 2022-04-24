@@ -42,11 +42,10 @@
   - Take picture
   - Evaluate picture, rate the Costume and estimate the age
     - Dispense Skittles!
-- [Exercise 6: Using Decision Tables](../Exercise6/index.md)
-- Third model
-  - Create model
-  - Create DMN
+- [Exercise 6: Using Google AI to automate decisions](../Exercise6/index.md)
+  - Third model
+    - Create model
+    - Create DMN
   - Deploy model and DMN
-  - Create task workers
   - Take picture
 -

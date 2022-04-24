@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	// "os"
+	"os"
 	"strings"
 
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/entities"
@@ -17,8 +17,8 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/gorilla/mux"
-	"github.com/golang/gddo/httputil/header"
-	"github.com/gorilla/handlers"
+	// "github.com/golang/gddo/httputil/header"
+	// "github.com/gorilla/handlers"
 )
 
 type ClientEnv struct {
@@ -92,22 +92,51 @@ func (a *App) Run(addr string) {
 
 	fileServer := http.FileServer(http.Dir("./pix")) // New code
 	http.Handle("/pix", fileServer)
-	log.Fatal(http.ListenAndServeTLS(addr,"/home/davidgs/.node-red/combined", "/home/davidgs/.node-red/combined", a.Router))
+	// log.Fatal(http.ListenAndServeTLS(addr,"/home/davidgs/.node-red/combined", "/home/davidgs/.node-red/combined", a.Router))
+	log.Fatal(http.ListenAndServe(addr, a.Router))
 
 }
 
 func (a *App) createInstance(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("startInstance")
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Println(err)
-	}
-	env := ClientEnv{}
-	err = json.Unmarshal(body, &env)
-	if err != nil {
-		fmt.Println(err)
-	}
-	authCreds := zbc.OAuthProviderConfig{
+	if r.Method == "GET" { // GET outta here! :-)
+		log.Println("GET Method Not Supported")
+		http.Error(w, "GET Method not supported", 400)
+	} else {
+		r.ParseMultipartForm(32 << 2) // allocate enough memory for the incoming picture.
+		file, handler, err := r.FormFile("uploadfile")
+		if err != nil {
+			fmt.Println("Format Error!", err)
+				// Any error types we don't specifically look out for default
+				// to serving a HTTP 500
+				http.Error(w, http.StatusText(http.StatusInternalServerError),
+					http.StatusInternalServerError)
+			return
+		}
+		defer file.Close()
+		log.Println("Incoming file: ", handler.Filename)
+		f, err := os.OpenFile("./test/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Could not Write new file", 500)
+			return
+		}
+		defer f.Close()
+		// io.Copy(f, file)
+		// var emotions = Emotions{}
+		// w.WriteHeader(200)
+		// if runners.VisionAI {
+		// 	emotions = doAIOnPic(handler.Filename)
+		// }
+		// sendPic(f.Name(), emotions)
+		creds := r.FormValue("credentials")
+		fmt.Println("creds: ", creds)
+		env := ClientEnv{}
+		err := json.Unmarshal([]byte(creds), &env)
+		if err != nil {
+			fmt.Println(err)
+		}
+		authCreds := zbc.OAuthProviderConfig{
 		ClientID:               env.ZeebeClientID,
 		ClientSecret:           env.ZeebeClientSecret,
 		Audience:               strings.Split(env.ZeebeAddress, ":")[0],
@@ -157,6 +186,9 @@ func (a *App) createInstance(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println(msg.String())
+	}
+
+
 	// jobWorker := client.NewJobWorker().JobType("fetch_data").Handler(getData).Open()
 
 	// <-readyClose
