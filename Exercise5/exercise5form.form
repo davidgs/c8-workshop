@@ -1,0 +1,96 @@
+{
+  "components": [
+    {
+      "text": "# Picture Evaluation",
+      "type": "text",
+      "id": "Field_0arw9pw"
+    },
+    {
+      "label": "The Picture",
+      "type": "textfield",
+      "id": "Field_1xdyje0",
+      "key": "imageLoc",
+      "disabled": true
+    },
+    {
+      "values": [
+        {
+          "label": "Yes",
+          "value": "true"
+        },
+        {
+          "label": "No",
+          "value": "false"
+        }
+      ],
+      "label": "Are they wearing a costume?",
+      "type": "radio",
+      "id": "Field_1v1tzoc",
+      "key": "isCostume",
+      "defaultValue": "true",
+      "validate": {
+        "required": true
+      },
+      "properties": {}
+    },
+    {
+      "values": [
+        {
+          "label": "Great Costume!",
+          "value": "great"
+        },
+        {
+          "label": "It's Ok I guess",
+          "value": "ok"
+        },
+        {
+          "label": "Is that even a costume?",
+          "value": "bad"
+        }
+      ],
+      "label": "Rate the Costume",
+      "type": "select",
+      "id": "Field_1jqled4",
+      "key": "rating",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "values": [
+        {
+          "label": "Very young!",
+          "value": "little"
+        },
+        {
+          "label": "Little Kid",
+          "value": "kid"
+        },
+        {
+          "label": "A tween",
+          "value": "tween"
+        },
+        {
+          "label": "Teenager",
+          "value": "teen"
+        }
+      ],
+      "label": "Estimate Age",
+      "type": "select",
+      "id": "Field_0g223p3",
+      "key": "age",
+      "validate": {
+        "required": true
+      }
+    }
+  ],
+  "schemaVersion": 4,
+  "exporter": {
+    "name": "Camunda Web Modeler",
+    "version": "b72d66c"
+  },
+  "type": "default",
+  "id": "Form_ec4c1ddf-3b9c-47a0-a1e0-b8b5feb636d5",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "1.3"
+}
