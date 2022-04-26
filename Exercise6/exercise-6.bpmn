@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Web Modeler" exporterVersion="b72d66c" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.3.0" camunda:diagramRelationId="7e6ad60f-12aa-406d-87ab-90a0b51f9dde">
+  <bpmn:process id="Exrcise6" name="Exercise 6 Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="New Picture">
+      <bpmn:outgoing>Flow_0b5g0go</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0b5g0go" sourceRef="StartEvent_1" targetRef="Activity_154can7"/>
+    <bpmn:serviceTask id="Activity_154can7" name="Submit to Google AI">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="DoPictureAI"/>
+        <zeebe:ioMapping>
+          <zeebe:input source="= imageLoc" target="imageLoc"/>
+          <zeebe:output source="= isPicture" target="isPicture"/>
+          <zeebe:output source="= JoyNumber" target="JoyNumber"/>
+          <zeebe:output source="= SorrowNumber" target="SorrowNumber"/>
+          <zeebe:output source="= AngerNumber" target="AngerNumber"/>
+          <zeebe:output source="= SurpriseNumber" target="SurpriseNumber"/>
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0b5g0go</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cf2eh8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1cf2eh8" sourceRef="Activity_154can7" targetRef="Activity_1q6rr68"/>
+    <bpmn:businessRuleTask id="Activity_1q6rr68" name="Evaluate Results">
+      <bpmn:extensionElements>
+        <zeebe:calledDecision decisionId="decideSkittles" resultVariable="candyPieces"/>
+        <zeebe:ioMapping>
+          <zeebe:input source="= AngerNumber" target="AngerNumber"/>
+          <zeebe:input source="= SorrowNumber" target="SorrowNumber"/>
+          <zeebe:input source="= JoyNumber" target="JoyNumber"/>
+          <zeebe:input source="= SurpriseNumber" target="SurpriseNumber"/>
+          <zeebe:input source="= isPicture" target="isPicture"/>
+          <zeebe:output source="= candyPieces" target="candyPieces"/>
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cf2eh8</bpmn:incoming>
+      <bpmn:outgoing>Flow_006oahp</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:exclusiveGateway id="Gateway_0u6iusc">
+      <bpmn:incoming>Flow_006oahp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ji5nnp</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1scfb6a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_006oahp" sourceRef="Activity_1q6rr68" targetRef="Gateway_0u6iusc"/>
+    <bpmn:sequenceFlow id="Flow_1ji5nnp" sourceRef="Gateway_0u6iusc" targetRef="Activity_1oqtmhv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=candyPieces &gt; 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_1oqtmhv" name="Dispense Skittles">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="dispense-candy"/>
+        <zeebe:ioMapping>
+          <zeebe:input source="= candyPieces" target="candyPieces"/>
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ji5nnp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uzfb8b</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1oyolsk" name="No Candy!">
+      <bpmn:incoming>Flow_1scfb6a</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1scfb6a" sourceRef="Gateway_0u6iusc" targetRef="Event_1oyolsk">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= candyPieces &lt;= 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0xei1me" name="Done!">
+      <bpmn:incoming>Flow_1uzfb8b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1uzfb8b" sourceRef="Activity_1oqtmhv" targetRef="Event_0xei1me"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Exrcise6">
+      <bpmndi:BPMNEdge id="Flow_1uzfb8b_di" bpmnElement="Flow_1uzfb8b">
+        <di:waypoint x="780" y="118"/>
+        <di:waypoint x="852" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1scfb6a_di" bpmnElement="Flow_1scfb6a" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="590" y="143"/>
+        <di:waypoint x="590" y="230"/>
+        <di:waypoint x="852" y="230"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ji5nnp_di" bpmnElement="Flow_1ji5nnp">
+        <di:waypoint x="615" y="118"/>
+        <di:waypoint x="680" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_006oahp_di" bpmnElement="Flow_006oahp">
+        <di:waypoint x="500" y="118"/>
+        <di:waypoint x="565" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cf2eh8_di" bpmnElement="Flow_1cf2eh8">
+        <di:waypoint x="340" y="118"/>
+        <di:waypoint x="400" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b5g0go_di" bpmnElement="Flow_0b5g0go">
+        <di:waypoint x="186" y="118"/>
+        <di:waypoint x="240" y="118"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="150" y="100" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="138" y="143" width="60" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0spdhjd_di" bpmnElement="Activity_154can7" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="240" y="78" width="100" height="80"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0y7de2v_di" bpmnElement="Activity_1q6rr68" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="400" y="78" width="100" height="80"/>
+        <bpmndi:BPMNLabel/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0u6iusc_di" bpmnElement="Gateway_0u6iusc" isMarkerVisible="true">
+        <dc:Bounds x="565" y="93" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oksfps_di" bpmnElement="Activity_1oqtmhv" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="680" y="78" width="100" height="80"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1oyolsk_di" bpmnElement="Event_1oyolsk" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="852" y="212" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="844" y="255" width="52" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xei1me_di" bpmnElement="Event_0xei1me" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="852" y="100" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="855" y="143" width="30" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

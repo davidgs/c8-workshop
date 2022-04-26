@@ -23,13 +23,13 @@ zeebeAuthServer: 'https://login.cloud.camunda.io/oauth/token'
 
 We will use this file throughout this workshop, so I suggest putting it at the top-level of your project.
 
-The `ScriptWorker` process will read this file in and set all the variables as needed to communicate with the C8 processes.
+The `script-worker` process will read this file in and set all the variables as needed to communicate with the C8 processes.
 
-The only edit to the file that is required is to change the `PROC_NAME` constant to the name of your process. Once this is set you can start the ScriptWorker with the following commands:
+The only edit to the file that is required is to change the `PROC_NAME` constant to the name of your process. Once this is set you can start the `script-worker` with the following commands:
 
 ```bash
 $ go build
-$ ./ScriptWorker
+$ ./script-worker
 ```
 
 You should see output like this:

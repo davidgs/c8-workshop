@@ -32,13 +32,13 @@ It really is just all the elements from the previous forms (from [Exercise 4](..
 
 The model is a much more simplified version of what we did in [Exercise 4](../Exercise4/index.md). We're going to create a model that only one form and has one decision table.
 
-![Exercise 5 Model](./images/exercise5.png)
+![Exercise 5 Model](images/exercise5.png)
 
 **Note:** Finding the `decision id` for the decision table can be a bit tricky. You can find it by opening the Decision Table, and clickin on the table itself, then looking in the Properties Panel under the `General` tab.
 
-![Decision Table ID](./images/decision-table-id.png)
+![Decision Table ID](images/decision-table-id.png)
 
-## Running the process
+## Deploying the process
 
 Now that we have out decision table, our form, and our model, it's time to get it all up and running. First, you'll need to deploy the decision table. Open the decision table in the modeler, and click the `Deploy Diagram` button.
 
@@ -48,7 +48,17 @@ Finally, you'll need to deploy the model. Open the model in the modeler, and cli
 
 Now that all 3 parts of the process are deployed, you can start the process.
 
-## Running the Process
+## Testing the Process
+
+From within the Web Modeler you can always start an instance of the process to test it. You will need to click the `Start Process` button on the top right of the modeler and add a JSON object containing some information to start the process:
+
+```json
+{"imageLoc": "https://davidgs.com:5050/pix/headshot.png", "isPicture": true }
+```
+
+That picture exists, and will be used to start an instance of the process to be evaluated.
+
+## Starting the Process
 
 The process ID (unless you changed it in the model) is `exercise-5-process`. If you hold down the second button on your camera board for about 10 seconds the board will reset itself and you can repeat the steps from [Exercise 3](../Exercise3/index.md) to configure the board to start the process.
 
@@ -59,7 +69,18 @@ The process ID (unless you changed it in the model) is `exercise-5-process`. If 
 
 If you go back to your Camunda Platform 8 Console now, and look under the Operate tab, you should see your Exercise 5 process running. You can then go to the Task Manager tab to complete the form and watch as the decision table is executed and skittles are dispensed up front.
 
-## Conslusion
+> **Note:** You can also build and start the go process contained in the Exercise 4 directory by running the following command in your terminal:
+>
+> ```shell
+> $ cd ../Exercise4
+> $ go build
+> $ ./dispense-candy
+> ```
+>
+> Which will simply build and run the go process. This Go process will print out the number of candy pieces to dispense rather than sending them to the actual Candy Dispenser.
+
+
+## Conclusion
 
 We have now seen how using a DMN Decision table can greatly simplify and streamline the entire process. We have reduced the human interaction to a single form, and we have a single DMN table to make all the decisions before dispensing Skittles.
 
