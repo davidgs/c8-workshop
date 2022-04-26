@@ -1,4 +1,7 @@
 
+#include <WiFiManager.h>
+
+
 #include <base64.h>
 #include "esp_camera.h"
 #include <HTTPClient.h>
@@ -12,11 +15,8 @@
 #include <WiFiClientSecure.h>
 #include <ssl_client.h>
 #include <ESPmDNS.h>
-#include <WiFiUdp.h>
-#include <WiFiClientSecure.h>
-#include <WiFiMulti.h>
 // #include <ArduinoJson.h>
-#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
+//#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
 // #include <Ticker.h>
 // Ticker ticker;
 
@@ -106,6 +106,7 @@ vGp4z7h/jnZymQyd/teRCBaho1+V
 -----END CERTIFICATE-----
  )EOF";
 
+byte mac[6];
 // Not sure if WiFiClientSecure checks the validity date of the certificate.
 // Setting clock just to be sure...
 void setClock() {
@@ -229,6 +230,19 @@ void setup() {
   wm.addParameter(&camunda_process_id);
   // set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wm.setAPCallback(configModeCallback);
+  WiFi.macAddress(mac);
+  Serial.print("MAC: ");
+  Serial.print(mac[5], HEX);
+  Serial.print(":");
+  Serial.print(mac[4], HEX);
+  Serial.print(":");
+  Serial.print(mac[3], HEX);
+  Serial.print(":");
+  Serial.print(mac[2], HEX);
+  Serial.print(":");
+  Serial.print(mac[1], HEX);
+  Serial.print(":");
+  Serial.println(mac[0], HEX);
   // fetches ssid and pass and tries to connect
   // if it does not connect it starts an access point with the specified name
   // here  "AutoConnectAP"
@@ -327,9 +341,10 @@ void loop() {
     Serial.print("Length of encoded message: ");
     Serial.println(buffer.length());
     esp_camera_fb_return(fb);
-    // char start_request[] = "\n--AaB03x\nContent-Disposition: form-data; name=\"credentials\"; \nContent-Transfer-Encoding: text\r\n";
-    // char mid_request[] = "\n--AaB03x\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\r\nContent-Type: image/jpeg\r\n\r\nContent-Transfer-Encoding: base64\n\n";
-    // char end_request[] = "\n--AaB03x--\n";
+    char start_request[] = "\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Type: application/json\nContent-Transfer-Encoding: text\nContent-Size: 384";
+    char mid_request[190];
+    sprintf(mid_request, "\r\n----c8-lab\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\nContent-Type: image/jpeg\nContent-Size: %d\r\nContent-Transfer-Encoding: base64\n\n", buffer.length());
+    char end_request[] = "\n----c8-lab--\n";
     // debugprint("First Part: ");
     // debugprintln(start_request);
     // debugprintln(upload);
@@ -340,30 +355,35 @@ void loop() {
     full_length = 280 + buffer.length() +128;
     debugprint("Length: ");
     debugprintln(full_length);
-     client->println("POST /CreateInstance HTTP/1.1");
+     client->printf("POST /CreateInstance HTTP/1.1\r\n");
+     //Host: example.com\r\nUser-Agent: ESP32\r\nContent-Type: multipart/form-data; boundary=--AaB03x\r\nContent-Length: %d\r\n\r\n----AaB03x\nContent-Disposition: form-data; name=\"credentials\"; \nContent-Transfer-Encoding: text\r\n%s\r\n----AaB03x\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\r\nContent-Type: image/jpeg\r\nContent-Size: %d\r\n%s\n----AaB03x--\n", full_length, upload, buffer.length(), buffer);
      debugprintln("POST /CreateInstance HTTP/1.1");
      client->println("Host: example.com");
      debugprintln("Host: example.com");
      client->println("User-Agent: ESP32");
      debugprintln("User-Agent: ESP32");
-     client->println("Content-Type: multipart/form-data; boundary=--AaB03x");
-     debugprintln("Content-Type: multipart/form-data; boundary=--AaB03x");
+     client->println("Content-Type: multipart/form-data; boundary=--c8-lab");
+     debugprintln("Content-Type: multipart/form-data; boundary=--c8-lab");
      client->print("Content-Length: ");
      debugprint("Content-Length: ");
      client->println(full_length);
      debugprintln(full_length);
      client->println("\r\n");
      debugprintln("\r\n");
-     client->println("\n--AaB03x\nContent-Disposition: form-data; name=\"credentials\"; \nContent-Transfer-Encoding: text\r\n");
-     debugprintln("\n--AaB03x\nContent-Disposition: form-data; name=\"credentials\"; \nContent-Transfer-Encoding: text\r\n");
+     client->println("\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Transfer-Encoding: text\nContent-Length: 384\r\n");
+     debugprintln("\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Transfer-Encoding: text\n");
      client->println(upload);
      debugprintln(upload);
-     client->println("\n--AaB03x\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\r\nContent-Type: image/jpeg\r\n\r\nContent-Transfer-Encoding: base64\n\n");
-     debugprintln("\n--AaB03x\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\r\nContent-Type: image/jpeg\r\n\r\nContent-Transfer-Encoding: base64\n\n");
+     client->print("\n----c8-lab\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\nContent-Type: image/jpeg\nContent-Size: ");
+     client->print(buffer.length());
+     client->println("\nContent-Transfer-Encoding: base64\n");
+     debugprint("\n----c8-lab\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\nContent-Type: image/jpeg\nContent-Size: ");
+     debugprint(buffer.length());
+     debugprintln("\nContent-Transfer-Encoding: base64\n");
       client->println(buffer);
       debugprintln(buffer);
-     client->println("\n--AaB03x--\n");
-     debugprintln("\n--AaB03x--\n");
+     client->println("\n----c8-lab--\n");
+     debugprintln("\n----c8-lab--\n");
 //    const int bufSize = 2048;
 //    char payload[full_length + 10];
 //    debugprintln("assembling payload ...");

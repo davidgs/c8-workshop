@@ -1,11 +1,9 @@
-module script-worker
+module dispense-candy
 
 go 1.18
 
 require (
 	github.com/camunda-cloud/zeebe/clients/go v1.3.7
-	github.com/gorilla/handlers v1.5.1
-	github.com/gorilla/mux v1.7.2
 	github.com/sirupsen/logrus v1.8.1
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -13,7 +11,6 @@ require (
 require (
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect

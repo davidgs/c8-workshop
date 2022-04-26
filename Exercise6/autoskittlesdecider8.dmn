@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="autoSkittles" name="AutoSkittles" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0" camunda:diagramRelationId="2a1097ed-589f-46e3-a46c-c46e23ea67fc" xmlns:camunda="http://camunda.org/schema/1.0/bpmn">
+  <inputData id="InputData_1623ph3" name="isPicture"/>
+  <inputData id="InputData_1qfqtxr" name="AngerAmount"/>
+  <inputData id="InputData_1ne03ix" name="SorrowAmount"/>
+  <inputData id="InputData_0tk9lsq" name="SurprisedAmount"/>
+  <inputData id="InputData_171nkdm" name="JoyAmount"/>
+  <decision id="decideSkittles" name="Decide Skittles">
+    <informationRequirement id="InformationRequirement_0r9mc57">
+      <requiredInput href="#InputData_1623ph3"/>
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_0g0kepb">
+      <requiredDecision href="#AngrySkittles"/>
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1iama6i">
+      <requiredDecision href="#SadSkittles"/>
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1n0ygcs">
+      <requiredDecision href="#SurpriseSkittles"/>
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_12nmmsg">
+      <requiredDecision href="#JoySkittles"/>
+    </informationRequirement>
+    <decisionTable id="DecisionTable_03dztzw">
+      <input id="InputClause_1fvtw9y" label="isPicture">
+        <inputExpression id="LiteralExpression_0xffjgq" typeRef="boolean">
+          <text>isPicture</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_1l5ynkd" label="Angry">
+        <inputExpression id="LiteralExpression_1mhzj6s" typeRef="integer">
+          <text>AngrySkittles</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_15h57h4" label="Sadness">
+        <inputExpression id="LiteralExpression_1hh8uep" typeRef="integer">
+          <text>SadSkittles</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_01902zm" label="Surprise!">
+        <inputExpression id="LiteralExpression_0pjpbum" typeRef="integer">
+          <text>SurpriseSkittles</text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_0xgkjt4" label="Joy!">
+        <inputExpression id="LiteralExpression_0ky7a7w" typeRef="integer">
+          <text>JoySkittles</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_1d3amxo" label="Skittles!!" name="candyPieces" typeRef="integer"/>
+      <rule id="DecisionRule_0ujwo1o">
+        <inputEntry id="UnaryTests_0h8hwrt">
+          <text>false</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_06ju0de">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1ibvmgu">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1da8br5">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1esl5fo">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0hiud02">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_09549ql">
+        <inputEntry id="UnaryTests_12zkcl9">
+          <text>true</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0bkygsg">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_17cfrjd">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1jhhxoy">
+          <text/>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0kkdbps">
+          <text/>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_00w3kpm">
+          <text>AngrySkittles+SadSkittles+SurpriseSkittles+JoySkittles</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="AngrySkittles" name="Angry Skittles">
+    <informationRequirement id="InformationRequirement_0jonlis">
+      <requiredInput href="#InputData_1qfqtxr"/>
+    </informationRequirement>
+    <decisionTable id="DecisionTable_0r2tiea">
+      <input id="InputClause_0r74e8x" label="AngrySkittles">
+        <inputExpression id="LiteralExpression_006eh4q" typeRef="integer">
+          <text>AngerNumber</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_1ddeoge" name="AngrySkittles" typeRef="integer"/>
+      <rule id="DecisionRule_18xls0o">
+        <inputEntry id="UnaryTests_1kcd4ae">
+          <text>&gt;0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0e4kmr7">
+          <text>AngerNumber*5</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0kpcwhk">
+        <inputEntry id="UnaryTests_1yk80yi">
+          <text>&lt;= 0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1e8k5jw">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="SadSkittles" name="Sad Skittles">
+    <informationRequirement id="InformationRequirement_002q1ws">
+      <requiredInput href="#InputData_1ne03ix"/>
+    </informationRequirement>
+    <decisionTable id="DecisionTable_10l9gxe">
+      <input id="InputClause_10i7cyj" label="SadSkittles">
+        <inputExpression id="LiteralExpression_195re6z" typeRef="integer">
+          <text>SorrowNumber</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_1z12lye" label="SadSkittles" name="SadSkittles" typeRef="integer"/>
+      <rule id="DecisionRule_17lisng">
+        <inputEntry id="UnaryTests_1p6s600">
+          <text>&gt;0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1mbchww">
+          <text>SorrowNumber * 3</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_006p7yp">
+        <inputEntry id="UnaryTests_147yjmc">
+          <text>&lt;= 0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0yf8rrq">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="SurpriseSkittles" name="Surprised Skittles">
+    <informationRequirement id="InformationRequirement_0njb1i7">
+      <requiredInput href="#InputData_0tk9lsq"/>
+    </informationRequirement>
+    <decisionTable id="DecisionTable_19ub9y2">
+      <input id="InputClause_1iv2nma" label="Surprise!">
+        <inputExpression id="LiteralExpression_1uqdi8b" typeRef="integer">
+          <text>SurpriseNumber</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_10n6hpo" name="SurpriseSkittles" typeRef="integer"/>
+      <rule id="DecisionRule_12otzps">
+        <inputEntry id="UnaryTests_1p42xth">
+          <text>&gt;0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1n2meax">
+          <text>decimal(SurpriseNumber / 3, 0) * 2</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_02cpq1n">
+        <inputEntry id="UnaryTests_0ik5y9q">
+          <text>&lt;= 0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_08dksmz">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <decision id="JoySkittles" name="Joyful Skittles">
+    <informationRequirement id="InformationRequirement_0isas9v">
+      <requiredInput href="#InputData_171nkdm"/>
+    </informationRequirement>
+    <decisionTable id="DecisionTable_13ijx8k">
+      <input id="InputClause_11xynwx" label="Joy">
+        <inputExpression id="LiteralExpression_10gj4gc" typeRef="integer">
+          <text>JoyNumber</text>
+        </inputExpression>
+      </input>
+      <output id="OutputClause_057xz1a" label="JoySkittles" name="JoySkittles" typeRef="integer"/>
+      <rule id="DecisionRule_1nav12i">
+        <inputEntry id="UnaryTests_00o5470">
+          <text>&gt;0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1bl3yxh">
+          <text>decimal(JoyNumber / 4, 0) * 20</text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_16zhlyd">
+        <inputEntry id="UnaryTests_0qbpp7q">
+          <text>&lt;=0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1j2bo22">
+          <text>0</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape id="DMNShape_1sgng4o" dmnElementRef="InputData_1623ph3">
+        <dc:Bounds height="45" width="125" x="188" y="118"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_14lku1n" dmnElementRef="InformationRequirement_0r9mc57">
+        <di:waypoint x="313" y="141"/>
+        <di:waypoint x="490" y="140"/>
+        <di:waypoint x="510" y="140"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_0xdm45k" dmnElementRef="InputData_1qfqtxr">
+        <dc:Bounds height="45" width="125" x="188" y="467"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_15y9a28" dmnElementRef="InformationRequirement_0g0kepb">
+        <di:waypoint x="219" y="310"/>
+        <di:waypoint x="546" y="200"/>
+        <di:waypoint x="546" y="180"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_1t26up1" dmnElementRef="InputData_1ne03ix">
+        <dc:Bounds height="45" width="125" x="417" y="467"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0u8wwzb" dmnElementRef="InformationRequirement_1iama6i">
+        <di:waypoint x="480" y="310"/>
+        <di:waypoint x="582" y="200"/>
+        <di:waypoint x="582" y="180"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_125kp84" dmnElementRef="InputData_0tk9lsq">
+        <dc:Bounds height="45" width="125" x="657" y="467"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0lp5bzi" dmnElementRef="InformationRequirement_1n0ygcs">
+        <di:waypoint x="720" y="310"/>
+        <di:waypoint x="618" y="200"/>
+        <di:waypoint x="618" y="180"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_11m8mj3" dmnElementRef="InputData_171nkdm">
+        <dc:Bounds height="45" width="125" x="907" y="467"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_1rrl7ey" dmnElementRef="InformationRequirement_12nmmsg">
+        <di:waypoint x="970" y="310"/>
+        <di:waypoint x="654" y="200"/>
+        <di:waypoint x="654" y="180"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_19shc30" dmnElementRef="InformationRequirement_0isas9v">
+        <di:waypoint x="970" y="467"/>
+        <di:waypoint x="970" y="410"/>
+        <di:waypoint x="970" y="390"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_05agkhx" dmnElementRef="InformationRequirement_0njb1i7">
+        <di:waypoint x="720" y="467"/>
+        <di:waypoint x="720" y="410"/>
+        <di:waypoint x="720" y="390"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_1lti6jq" dmnElementRef="InformationRequirement_002q1ws">
+        <di:waypoint x="480" y="467"/>
+        <di:waypoint x="480" y="410"/>
+        <di:waypoint x="480" y="390"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_1umy57m" dmnElementRef="InformationRequirement_0jonlis">
+        <di:waypoint x="251" y="467"/>
+        <di:waypoint x="219" y="410"/>
+        <di:waypoint x="219" y="390"/>
+      </dmndi:DMNEdge>
+      <dmndi:DMNShape id="DMNShape_0d54kbq" dmnElementRef="decideSkittles">
+        <dc:Bounds height="80" width="180" x="510" y="100"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_0fxhqtb" dmnElementRef="AngrySkittles">
+        <dc:Bounds height="80" width="180" x="129" y="310"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_087x3uj" dmnElementRef="SadSkittles">
+        <dc:Bounds height="80" width="180" x="390" y="310"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1eepa0p" dmnElementRef="SurpriseSkittles">
+        <dc:Bounds height="80" width="180" x="630" y="310"/>
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1nmjnrt" dmnElementRef="JoySkittles">
+        <dc:Bounds height="80" width="180" x="880" y="310"/>
+      </dmndi:DMNShape>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>

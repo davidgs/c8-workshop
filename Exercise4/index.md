@@ -17,6 +17,16 @@ If you open the `exercise4.bpmn` you will see that all the forms are already lin
 
 You can now Deploy this model, but don't start a process instance just yet. The IoT Hardware we built in [Exercise 3](../Exercise3/index.md) will be starting all the instances of this process for us.
 
+## Testing the Process
+
+From within the Web Modeler you can always start an instance of the process to test it. You will need to click the `Start Process` button on the top right of the modeler and add a JSON object containing some information to start the process:
+
+```json
+{"imageLoc": "https://davidgs.com:5050/pix/headshot.png", "isPicture": true }
+```
+
+That picture exists, and will be used to start an instance of the process to be evaluated.
+
 ## Starting a Process Instance
 
 Now that we have deployed the model, we can use the Camera to start a process. It's as simple as pressing the second button on your camera board! You should see the bright Flash LED come on and then the camera will take a picture.
@@ -44,6 +54,15 @@ Once you click the `Complete Task` button the task will disappear from your task
 You will now need to go back and forth between the `Operate` Tab and the `Task List` Tab to see the process move along the diagram as you complete the tasks in the Task List.
 
 At the end, you should hear Skittles come out of the dispenser at the front of the room.
+
+> **Note:** You can also build and start the go process contained in this directory by running the following command in your terminal:
+>
+> ```shell
+> $ go build
+> $ ./dispense-candy
+> ```
+>
+> Which will simply build and run the go process. This Go process will print out the number of candy pieces to dispense rather than sending them to the actual Candy Dispenser.
 
 ## Lessons Learned
 
