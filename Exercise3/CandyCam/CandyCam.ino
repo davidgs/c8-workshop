@@ -1,7 +1,5 @@
 
 #include <WiFiManager.h>
-
-
 #include <base64.h>
 #include "esp_camera.h"
 #include <HTTPClient.h>
@@ -15,10 +13,6 @@
 #include <WiFiClientSecure.h>
 #include <ssl_client.h>
 #include <ESPmDNS.h>
-// #include <ArduinoJson.h>
-//#include <WiFiManager.h> // https://github.com/tzapu/WiFiManager
-// #include <Ticker.h>
-// Ticker ticker;
 
 #ifndef LED_BUILTIN
 #define LED_BUILTIN 33 // ESP32 DOES NOT DEFINE LED_BUILTIN
@@ -43,12 +37,12 @@
 
 #define SERIAL_TX 1
 #define SERIAL_RX 3
-
 #define FLASH_BULB 4
-
 #define RESET_BTN 12
 #define SHUTTER 13
 
+#define SERVER "davidgs.com"
+#define PORT 5050
 struct Settings
 {
   char c8_server[100] = "YOUR_SERVER.bru-2.zeebe.camunda.io:443";
@@ -67,11 +61,10 @@ void configModeCallback(WiFiManager *myWiFiManager)
   debugprintln(WiFi.softAPIP());
   // if you used auto generated SSID, print it
   debugprintln(myWiFiManager->getConfigPortalSSID());
-  // entered config mode, make led toggle faster
-  // ticker.attach(0.2, tick);
 }
 
- const char ServerCert[] PROGMEM = R"EOF(
+// this is the cert for my server. You will have to change it for yours!!
+const char ServerCert[] PROGMEM = R"EOF(
  -----BEGIN CERTIFICATE-----
 MIIFgTCCBGmgAwIBAgIQOXJEOvkit1HX02wQ3TE1lTANBgkqhkiG9w0BAQwFADB7
 MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
@@ -107,11 +100,13 @@ vGp4z7h/jnZymQyd/teRCBaho1+V
  )EOF";
 
 byte mac[6];
+
+void startCameraServer();
+
 // Not sure if WiFiClientSecure checks the validity date of the certificate.
 // Setting clock just to be sure...
 void setClock() {
   configTime(0, 0, "pool.ntp.org", "time.nist.gov");
-
   debugprintF("Waiting for NTP time sync: ");
   time_t nowSecs = time(nullptr);
   while (nowSecs < 8 * 3600 * 2) {
@@ -120,17 +115,11 @@ void setClock() {
     yield();
     nowSecs = time(nullptr);
   }
-
   debugprintln();
   struct tm timeinfo;
   gmtime_r(&nowSecs, &timeinfo);
   debugprintF("Current time: ");
   debugprint(asctime(&timeinfo));
-}
-
-void tick() {
-  // toggle state
-  digitalWrite(LED, !digitalRead(LED)); // set pin to the opposite state
 }
 
 void setup() {
@@ -147,8 +136,6 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(RESET_BTN, INPUT);
   pinMode(SHUTTER, INPUT);
-  // start ticker with 0.5 because we start in AP mode and try to connect
-  // ticker.attach(0.6, tick);
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
   config.ledc_timer = LEDC_TIMER_0;
@@ -186,7 +173,6 @@ void setup() {
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
     Serial.printf("Camera init failed with error 0x%x", err);
-    // flashError();
   }
 
   sensor_t *s = esp_camera_sensor_get();
@@ -211,7 +197,6 @@ void setup() {
   // reset settings - for testing
   if (digitalRead(RESET_BTN) == HIGH) {
     wm.resetSettings();
-    // ticker.detach();
   }
   EEPROM.begin(512);
   EEPROM.get(0, sett);
@@ -255,10 +240,8 @@ void setup() {
   }
 
   // if you get here you have connected to the WiFi
-  debugprintln("connected...yay :)");
-
+  debugprintln("Connected...Yay! :)");
   setClock();
-  // ticker.detach();
   sett.c8_server[99] = '\0';
   strncpy(sett.c8_server, camunda_cloud_server.getValue(), 100);
   sett.c8_client_id[49] = '\0';
@@ -281,7 +264,7 @@ void setup() {
   debugprint("Camunda Process ID: ");
   debugprintln(sett.c8_process_id);
   debugprintln();
-  // startCameraServer();
+  startCameraServer();
 
   Serial.print("Camera Ready! Use 'http://");
   Serial.print(WiFi.localIP());
@@ -292,7 +275,7 @@ void setup() {
 void loop() {
   if (digitalRead(RESET_BTN) == HIGH) {
     debugprintln("Resetting!!");
-    // reset and try again, or maybe put it to deep sleep
+    // reset and try again
     ESP.restart();
     delay(1000);
   }
@@ -311,111 +294,68 @@ void loop() {
     debugprintln("picture taken");
     debugprintln("setting up credentials");
     char upload[512];
-    int len = sprintf(upload, "{\"zeebeClientID\": \"%s\", \"zeebeClientSecret\": \"%s\", \"zeeBeAddress\": \"%s\", \"processID\": \"%s\", \"variables\": {\"length\": %d,  \"image\": \"foo.jpg\"}}", sett.c8_client_id, sett.c8_client_secret, sett.c8_server, sett.c8_process_id, fb->len);
+    int len = sprintf(upload, "{\"zeebeClientID\": \"%s\", \"zeebeClientSecret\": \"%s\", \"zeeBeAddress\": \"%s\", \"processID\": \"%s\", \"variables\": {\"length\": %d,  \"image\": \"foo.jpg\", \"isPicture\": false }}", sett.c8_client_id, sett.c8_client_secret, sett.c8_server, sett.c8_process_id, fb->len);
     debugprintln("Credentials set: ");
     debugprintln(upload);
-      debugprintln("setting CA Cert");
-     WiFiClientSecure *client = new WiFiClientSecure;
-     if (client){
-       client->setCACert(ServerCert);
-     }
+    debugprintln("setting CA Cert");
+    WiFiClientSecure *client = new WiFiClientSecure;
+    if (client) {
+      client->setCACert(ServerCert);
+    }
     debugprintln("cert set");
     debugprintln("Posting ...");
-     client->connect("davidgs.com", 5050);
-     int tries = 0;
-     while (!client->connected()) {
-       Serial.printf("*** Can't connect. ***\n-------\n");
-       delay(500);
-       debugprint(".");
-       client->connect("davidgs.com", 5050);
-       tries++;
-       if (tries > 10) {
-         return;
-       }
-     }
+    client->connect(SERVER, PORT);
+    int tries = 0;
+    while (!client->connected()) {
+      Serial.printf("*** Can't connect. ***\n-------\n");
+      delay(500);
+      debugprint(".");
+      client->connect(SERVER, PORT);
+      tries++;
+      if (tries > 10) {
+        return;
+      }
+    }
     debugprintln("Connected!");
     size_t size = fb->len;
-//    unsigned char[size] base_enc_buff;
-//    int enc_len = mbedtls_base64_encode(&base_enc_buff, size,
     String buffer = base64::encode((uint8_t *)fb->buf, fb->len);
-    Serial.print("Length of encoded message: ");
-    Serial.println(buffer.length());
+    debugprint("Length of encoded message: ");
+    debugprintln(buffer.length());
     esp_camera_fb_return(fb);
-    char start_request[] = "\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Type: application/json\nContent-Transfer-Encoding: text\nContent-Size: 384";
+    char start_request[384];
+    sprintf(start_request, "\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Type: application/json\nContent-Transfer-Encoding: text\nContent-Size: %d", strlen(upload));
     char mid_request[190];
     sprintf(mid_request, "\r\n----c8-lab\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\nContent-Type: image/jpeg\nContent-Size: %d\r\nContent-Transfer-Encoding: base64\n\n", buffer.length());
     char end_request[] = "\n----c8-lab--\n";
-    // debugprint("First Part: ");
-    // debugprintln(start_request);
-    // debugprintln(upload);
-    // debugprintln(mid_request);
-    // debugprintln(buffer);
-    // debugprintln(end_request);
     size_t full_length;
-    full_length = 280 + buffer.length() +128;
+    full_length = sizeof(start_request) + sizeof(mid_request) + buffer.length() + sizeof(end_request) + strlen(upload);
     debugprint("Length: ");
     debugprintln(full_length);
-     client->printf("POST /CreateInstance HTTP/1.1\r\n");
-     //Host: example.com\r\nUser-Agent: ESP32\r\nContent-Type: multipart/form-data; boundary=--AaB03x\r\nContent-Length: %d\r\n\r\n----AaB03x\nContent-Disposition: form-data; name=\"credentials\"; \nContent-Transfer-Encoding: text\r\n%s\r\n----AaB03x\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\r\nContent-Type: image/jpeg\r\nContent-Size: %d\r\n%s\n----AaB03x--\n", full_length, upload, buffer.length(), buffer);
-     debugprintln("POST /CreateInstance HTTP/1.1");
-     client->println("Host: example.com");
-     debugprintln("Host: example.com");
-     client->println("User-Agent: ESP32");
-     debugprintln("User-Agent: ESP32");
-     client->println("Content-Type: multipart/form-data; boundary=--c8-lab");
-     debugprintln("Content-Type: multipart/form-data; boundary=--c8-lab");
-     client->print("Content-Length: ");
-     debugprint("Content-Length: ");
-     client->println(full_length);
-     debugprintln(full_length);
-     client->println("\r\n");
-     debugprintln("\r\n");
-     client->println("\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Transfer-Encoding: text\nContent-Length: 384\r\n");
-     debugprintln("\n----c8-lab\nContent-Disposition: form-data; name=\"credentials\";\nContent-Transfer-Encoding: text\n");
-     client->println(upload);
-     debugprintln(upload);
-     client->print("\n----c8-lab\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\nContent-Type: image/jpeg\nContent-Size: ");
-     client->print(buffer.length());
-     client->println("\nContent-Transfer-Encoding: base64\n");
-     debugprint("\n----c8-lab\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\nContent-Type: image/jpeg\nContent-Size: ");
-     debugprint(buffer.length());
-     debugprintln("\nContent-Transfer-Encoding: base64\n");
-      client->println(buffer);
-      debugprintln(buffer);
-     client->println("\n----c8-lab--\n");
-     debugprintln("\n----c8-lab--\n");
-//    const int bufSize = 2048;
-//    char payload[full_length + 10];
-//    debugprintln("assembling payload ...");
-//    sprintf(payload, "\n--AaB03x\nContent-Disposition: form-data; name=\"credentials\"; \nContent-Transfer-Encoding: text\r\n%s\r\n\n--AaB03x\nContent-Disposition: form-data; name=\"image_file\"; filename=\"foo.jpg\"\r\nContent-Type: image/jpeg\r\n\r\nContent-Transfer-Encoding: base64\n\n\r\n%s\r\n\n--AaB03x--\n\n", upload, buffer);
-//    // size_t fbLen = buffer.length();
-//    HTTPClient http;
-//    http.begin("https://davidgs.com:5050/CreateInstance");
-//    http.addHeader("Content-Type",  "multipart/form-data; boundary=--AaB03x");     
-//    int httpResponseCode = http.POST(payload);
-//
-//    if(httpResponseCode>0){
-//      Serial.print(httpResponseCode);
-//      Serial.print(" Returned String: ");
-//      Serial.println(http.getString());
-//    } else {      
-//      Serial.print("POST Error: ");
-//      Serial.print(httpResponseCode);
-//    }      
-    // for (size_t n = 0; n < fbLen; n = n + 1024) {
-    //   if (n + 1024 < fbLen) {
-    //     client->write(encoded, 1024);
-    //     encoded += 1024;
-    //   }
-    //   else if (fbLen % 1024 > 0) {
-    //     size_t remainder = fbLen % 1024;
-    //     client->write(encoded, remainder);
-    //   }
-    // }
-    // client->print(end_request);
-     client->stop();
-    Serial.println("Done!");
-    
-    //     }
+    client->printf("POST /CreateInstance HTTP/1.1\r\n");
+    debugprintln("POST /CreateInstance HTTP/1.1");
+    client->println("Host: example.com");
+    debugprintln("Host: example.com");
+    client->println("User-Agent: ESP32");
+    debugprintln("User-Agent: ESP32");
+    client->println("Content-Type: multipart/form-data; boundary=--c8-lab");
+    debugprintln("Content-Type: multipart/form-data; boundary=--c8-lab");
+    client->print("Content-Length: ");
+    debugprint("Content-Length: ");
+    client->println(full_length);
+    debugprintln(full_length);
+    client->println("\r\n\r\n");
+    debugprintln("\r\n\r\n");
+    client->println(start_request);
+    debugprintln(start_request);
+    client->println(upload);
+    debugprintln(upload);
+    client->println(mid_request);
+    debugprint(mid_request);
+    client->println(buffer);
+    //      debugprintln(buffer); // don't do this, it's massive
+    client->println(end_request);
+    debugprintln(end_request);
+    client->stop();
+    debugprintln("Done!");
   }
 }

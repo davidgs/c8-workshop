@@ -30,18 +30,22 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
+	"strconv"
 
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/entities"
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/worker"
 	"github.com/camunda-cloud/zeebe/clients/go/pkg/zbc"
 	"gopkg.in/yaml.v2"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 // Set this to the name of your task
-const PROC_NAME = "AddOneTask"
+const PROC_NAME = "dispense-candy"
 
 // Set this to `false` to stop output to the terminal
 const DEBUG = true
+
+const TOPIC = "candy"
 
 // ENV sucture for all the Camunda Platform 8 credentials and settings
 type ENV struct {
@@ -57,8 +61,7 @@ type App struct {
 
 // JobVars the variables we get from the Camunda Platform 8 process
 type JobVars struct {
-	Add   int `json:"add"`
-	Count int `json:"count"`
+	CandyPieces   int `json:"candyPieces"`
 }
 
 var config = ENV{}
@@ -67,7 +70,7 @@ var readyClose = make(chan struct{})
 
 func main() {
 	a := App{}
-	dPrintln("Starting Camunda Cloud Zeebe ScriptWorker")
+	dPrintln("Starting Camunda Cloud Zeebe Candy Dispenser")
 	dPrintln("===================================")
 	err := a.Initialize()
 	if err != nil {
@@ -132,15 +135,15 @@ func (a *App) handleC8Job(client worker.JobClient, job entities.Job) {
 		return
 	}
 	dPrintf("%+v\n", jobVars)
-	if jobVars.Count < 0 {
-		jobVars.Count = 0
+	if jobVars.CandyPieces < 0 {
+		jobVars.CandyPieces = 0
 	}
-	if jobVars.Add <= 0 {
-		jobVars.Add = 1
-	}
-	// This is a simple script. We add the two values and return the result.
-	jobVars.Count = jobVars.Count + jobVars.Add
 	dPrintf("%+v\n", jobVars)
+	err = a.dispenseCandy(jobVars)
+	if err != nil {
+		failJob(client, job)
+		return
+	}
 	request, err := client.NewCompleteJobCommand().JobKey(jobKey).VariablesFromObject(jobVars)
 	if err != nil {
 		// failed to set the updated variables
@@ -178,4 +181,24 @@ func dPrintln(a ...interface{}) {
 	if DEBUG {
 		fmt.Println(a...)
 	}
+}
+
+
+
+// process requests to dispense Skittles!
+func (a *App) dispenseCandy(vars JobVars) error {
+	opts := mqtt.NewClientOptions().AddBroker("tcp://davidgs.com:8883")
+
+	client := mqtt.NewClient(opts)
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		return token.Error()
+	}
+	dispense := fmt.Sprintf("{candy=%s }", strconv.Itoa(vars.CandyPieces))
+	fmt.Printf("Candy Dispener: %s\n", dispense)
+	sendtoken := client.Publish(TOPIC, 0, false, dispense)
+	if sendtoken.Error() != nil {
+		return sendtoken.Error()
+	}
+	sendtoken.Wait()
+	return nil
 }
